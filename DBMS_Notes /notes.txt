@@ -1,0 +1,347 @@
+Problems: Redundancy, Access, Integrity, Atomicity, Concurrency, Security
+
+3 Levels: View → Logical → Physical
+
+Schema: Structure | Instance: Current data
+
+DDL: CREATE, ALTER, DROP
+
+DML: SELECT, INSERT, UPDATE, DELETE
+
+Storage Manager: Buffer, File, Transaction, Authorization
+
+Query Processor: DDL Interpreter, DML Compiler, Query Engine
+
+ACID: Atomicity • Consistency • Isolation • Durability
+
+Architecture: 2-tier vs 3-tier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ER MODEL = Blueprint before tables
+
+Entity        → Thing
+Entity Set    → Collection
+Attribute     → Property
+Relationship  → Connection
+Key           → Unique identifier
+
+Attribute Types
+---------------
+Simple
+Composite
+Multivalued
+Derived
+
+Keys
+----
+Superkey
+   ↓ minimal
+Candidate
+   ↓ chosen
+Primary
+
+Golden Rule
+-----------
+Don't duplicate data.
+Use relationships instead of repeating attributes.
+1. Rectangle?  → Create table
+
+2. Underlined attribute?
+              → Primary Key
+
+3. Composite?
+              → Split columns
+
+4. Multivalued?
+              → New table
+
+5. Relationship?
+   1:1  → FK either side
+   1:N  → FK on MANY side
+   M:N  → New relation
+
+
+
+
+
+
+
+RELATION = Table
+
+ATTRIBUTE = Column
+
+TUPLE = Row
+
+DOMAIN = Allowed values
+
+DEGREE = Number of columns
+
+CARDINALITY = Number of rows
+
+SCHEMA = Structure
+
+INSTANCE = Actual data
+
+NULL = Unknown value
+
+
+
+
+INTEGRITY CONSTRAINTS
+
+1. Domain
+   → Valid values only
+
+2. Key
+   → No duplicate keys
+
+3. Entity Integrity
+   → Primary Key ≠ NULL
+
+4. Referential Integrity
+   → Foreign Key must match
+     Parent Primary Key
+
+RESTRICT = Don't delete parent
+
+CASCADE = Delete parent + children
+
+
+
+
+
+
+
+
+One-line meanings
+Action
+
+Meaning
+
+PUSH
+
+Overflow → send separator key to parent
+
+COPY
+
+Leaf split → copy separator into parent
+
+BORROW
+
+Take one key from sibling before merging
+
+MERGE
+
+Combine two underfull siblings
+
+PULL
+
+After merge, remove separator from parent
+
+Insert: PUSH + COPY
+
+Delete: BORROW → MERGE → PULL
+
+Complete Concepts Learned (One Line Each)
+Tables & SQL
+Table → Stores actual records (rows).
+
+Index → Stores search keys + pointers to rows.
+
+Primary Key → Unique identifier of a row.
+
+Foreign Key → References another table's primary key.
+
+View → Virtual table created from a query.
+
+Indexing
+Primary Index → Index built on the storage/primary attribute.
+
+Secondary Index → Index built on any non-storage attribute.
+
+Clustered Index → Table order matches index order.
+
+Unclustered Index → Index is sorted; table stays unchanged.
+
+Dense Index → Every search key has an index entry.
+
+Sparse Index → Only some keys/pages have index entries.
+
+B+ Tree
+Internal Nodes → Store only keys for navigation.
+
+Leaf Nodes → Store keys + record pointers.
+
+Leaf Linking → Enables fast range queries.
+
+PUSH → Overflow sends key upward.
+
+COPY → Leaf separator is copied to parent.
+
+BORROW → Redistribute from sibling.
+
+MERGE → Join two siblings.
+
+PULL → Parent separator removed after merge.
+
+Hash Index
+Hash Index → Uses hash(key) to find bucket directly.
+
+Bucket → Group of records sharing same hash result.
+
+Equality Search → Best use case (=).
+
+Range Query → Poor with hashing.
+
+Static Hashing
+Static Hashing → Fixed number of buckets.
+
+Overflow Page → Extra page attached when bucket is full.
+
+Extendible Hashing
+Directory → Array of pointers to buckets.
+
+Global Depth (GD) → Number of bits used by directory.
+
+Local Depth (LD) → Bits needed to identify one bucket.
+
+Split Image → Buddy bucket created during split.
+
+GD = LD → Double directory, then split.
+
+GD > LD → Split bucket only.
+
+Delete → Merge with split image if possible.
+
+The 4 exam questions to ask yourself
+Where is the data? → Table
+
+What attribute is indexed? → Primary or Secondary
+
+How are keys organized? → B+ Tree (sorted) or Hash (buckets)
+
+Does the table follow index order? → Clustered or Unclustered
+
+
+
+
+
+
+
+
+Level = current hash function
+NEXT  = bucket to split
+
+Insert
+ │
+ ▼
+Find bucket
+ │
+ ▼
+Full?
+ │
+ ├── No → Insert
+ │
+ └── Yes
+      │
+      ▼
+ Create overflow page
+      │
+      ▼
+ Split bucket NEXT
+      │
+      ▼
+ NEXT++
+
+If NEXT reaches last bucket:
+Level++
+NEXT = 0
+(New round)
+
+
+
+
+
+
+
+
+
+
+30-second final revision (one line each)
+Table = actual records stored on disk.
+
+Index = shortcut that points to records.
+
+Primary index = built on the table's ordering key.
+
+Secondary index = built on a non-ordering attribute.
+
+Clustered = data rows are physically ordered by the index key.
+
+Unclustered = index is ordered, data is scattered.
+
+Dense index = every search key has an index entry.
+
+Sparse index = only some keys/pages have entries.
+
+B+ Tree = balanced ordered index for equality + range queries.
+
+Internal nodes = store keys and child pointers only.
+
+Leaf nodes = store all keys + record pointers.
+
+Split = overflow → divide node.
+
+Copy = leaf split sends separator upward.
+
+Push = internal split moves middle key upward.
+
+Borrow = take one key from sibling during deletion.
+
+Merge = combine siblings when borrowing isn't possible.
+
+Hashing = key → bucket using a hash function.
+
+Bucket = fixed-size page storing multiple records.
+
+Collision = different keys map to the same bucket.
+
+Overflow page = extra page chained to a full bucket.
+
+Static hashing = fixed number of buckets.
+
+Extendible hashing = directory grows using global & local depth.
+
+Linear hashing = no directory; split buckets round-robin using Level & Next.
+
+Hashing vs B+ Tree = equality → Hashing, range → B+ Tree.
+
+Your hashing poster is ready as your revision sheet. 
+
+
+
+
+ACTIVE
+   │
+   ▼
+PARTIALLY COMMITTED
+   │
+ ┌─┴─────────┐
+ │           │
+ ▼           ▼
+COMMITTED   FAILED
+                │
+                ▼
+            ABORTED
