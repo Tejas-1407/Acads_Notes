@@ -227,3 +227,4 @@ Time complexity:
 - DAG has no back edges.
 - Topological sort = decreasing post order.
 - SCCs are found using **Kosaraju (2 DFS + Transpose)**.
+
